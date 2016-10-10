@@ -1,57 +1,57 @@
 pipeline:
 
-  my-build:
-    privileged: true
-    image: docker:1.11
-    environment:
-      - DOCKER_HOST=tcp://127.0.0.1:2375
-    commands:
-      - docker build -t node-hello-world .
-    when:
-      branch: master
-      event: push
+  # my-build:
+  #   privileged: true
+  #   image: docker:1.11
+  #   environment:
+  #     - DOCKER_HOST=tcp://127.0.0.1:2375
+  #   commands:
+  #     - docker build -t node-hello-world .
+  #   when:
+  #     branch: master
+  #     event: push
 
-  image_to_quay:
-    image: docker:1.11
-    environment:
-      - DOCKER_HOST=tcp://127.0.0.1:2375
-    commands:
-      - docker login -u="ukhomeofficedigital+drone_demo" -p=${DOCKER_PASSWORD} quay.io
-      - docker tag node-hello-world quay.io/ukhomeofficedigital/node-hello-world:${DRONE_COMMIT_SHA}
-      - docker push quay.io/ukhomeofficedigital/node-hello-world:${DRONE_COMMIT_SHA}
-    when:
-      branch: master
-      event: push
+  # image_to_quay:
+  #   image: docker:1.11
+  #   environment:
+  #     - DOCKER_HOST=tcp://127.0.0.1:2375
+  #   commands:
+  #     - docker login -u="ukhomeofficedigital+drone_demo" -p=${DOCKER_PASSWORD} quay.io
+  #     - docker tag node-hello-world quay.io/ukhomeofficedigital/node-hello-world:${DRONE_COMMIT_SHA}
+  #     - docker push quay.io/ukhomeofficedigital/node-hello-world:${DRONE_COMMIT_SHA}
+  #   when:
+  #     branch: master
+  #     event: push
 
-  image_to_artifactory:
-    image: docker:1.11
-    environment:
-      - DOCKER_HOST=tcp://127.0.0.1:2375
-    commands:
-      - docker login -u="regt-build-bot" -p=${DOCKER_ARTIFACTORY_PASSWORD} docker.digital.homeoffice.gov.uk
-      - docker tag node-hello-world docker.digital.homeoffice.gov.uk/ukhomeofficedigital/node-hello-world:${DRONE_COMMIT_SHA}
-      - docker push docker.digital.homeoffice.gov.uk/ukhomeofficedigital/node-hello-world:${DRONE_COMMIT_SHA}
-    when:
-      branch: master
-      event: push
+  # image_to_artifactory:
+  #   image: docker:1.11
+  #   environment:
+  #     - DOCKER_HOST=tcp://127.0.0.1:2375
+  #   commands:
+  #     - docker login -u="regt-build-bot" -p=${DOCKER_ARTIFACTORY_PASSWORD} docker.digital.homeoffice.gov.uk
+  #     - docker tag node-hello-world docker.digital.homeoffice.gov.uk/ukhomeofficedigital/node-hello-world:${DRONE_COMMIT_SHA}
+  #     - docker push docker.digital.homeoffice.gov.uk/ukhomeofficedigital/node-hello-world:${DRONE_COMMIT_SHA}
+  #   when:
+  #     branch: master
+  #     event: push
 
-  pr-builder:
-    privileged: true
-    image: docker:1.11
-    environment:
-      - DOCKER_HOST=tcp://127.0.0.1:2375
-    commands:
-      - docker build -t node-hello-world .
-    when:
-      event: pull_request
+  # pr-builder:
+  #   privileged: true
+  #   image: docker:1.11
+  #   environment:
+  #     - DOCKER_HOST=tcp://127.0.0.1:2375
+  #   commands:
+  #     - docker build -t node-hello-world .
+  #   when:
+  #     event: pull_request
 
-  deploy-to-prod:
-    image: busybox
-    commands:
-      - /bin/echo hello prod
-    when:
-      environment: production
-      event: deployment
+  # deploy-to-prod:
+  #   image: busybox
+  #   commands:
+  #     - /bin/echo hello prod
+  #   when:
+  #     environment: production
+  #     event: deployment
 
   deploy:
     image: busybox
@@ -80,9 +80,9 @@ pipeline:
   trigger_deploy:
     image: quay.io/ukhomeofficedigital/drone-trigger:latest
     drone_server: https://drone.digital.homeoffice.gov.uk
-    repo: UKHomeOffice/kube-node-hello-world
+    repo: UKHomeOffice/docker-node-hello-world
     branch: master
-    deploy_to: dev-induction
+    deploy_to: uat
     params: HELLO_WORLD_NODE_IMAGE_TAG=${DRONE_COMMIT_SHA}
     when:
       branch: master
